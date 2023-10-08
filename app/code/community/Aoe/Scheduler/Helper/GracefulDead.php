@@ -35,7 +35,7 @@ class Aoe_Scheduler_Helper_GracefulDead
             }
             $schedule
                 ->setStatus(Aoe_Scheduler_Model_Schedule::STATUS_DIED)
-                ->setFinishedAt(strftime('%Y-%m-%d %H:%M:%S', time()))
+                ->setFinishedAt(date(Varien_Db_Adapter_Pdo_Mysql::TIMESTAMP_FORMAT))
                 ->save();
             Mage::unregister('currently_running_schedule');
         }

@@ -21,7 +21,7 @@ class Aoe_Scheduler_Model_ScheduleManager
     {
         $schedules = Mage::getModel('cron/schedule')->getCollection()
             ->addFieldToFilter('status', Aoe_Scheduler_Model_Schedule::STATUS_PENDING)
-            ->addFieldToFilter('scheduled_at', array('lt' => strftime('%Y-%m-%d %H:%M:%S', time())))
+            ->addFieldToFilter('scheduled_at', array('lt' => date(Varien_Db_Adapter_Pdo_Mysql::TIMESTAMP_FORMAT)))
             ->addOrder('scheduled_at', 'DESC')
             ->load();
 
@@ -67,7 +67,7 @@ class Aoe_Scheduler_Model_ScheduleManager
     {
         $pendingSchedules = Mage::getModel('cron/schedule')->getCollection()
             ->addFieldToFilter('status', Aoe_Scheduler_Model_Schedule::STATUS_PENDING)
-            ->addFieldToFilter('scheduled_at', array('lt' => strftime('%Y-%m-%d %H:%M:%S', time())))
+            ->addFieldToFilter('scheduled_at', array('lt' => date(Varien_Db_Adapter_Pdo_Mysql::TIMESTAMP_FORMAT)))
             ->addOrder('scheduled_at', 'ASC');
 
         $whitelist = array_filter(array_map('trim', $whitelist));
@@ -95,10 +95,10 @@ class Aoe_Scheduler_Model_ScheduleManager
     {
         $processManager = Mage::getModel('aoe_scheduler/processManager'); /* @var $processManager Aoe_Scheduler_Model_ProcessManager */
         if (!$processManager->isJobCodeRunning($jobCode)) {
-            $ts = strftime('%Y-%m-%d %H:%M:00', time());
+            $ts = date('Y-m-d H:i:00');
             $schedule = Mage::getModel('cron/schedule'); /* @var $schedule Aoe_Scheduler_Model_Schedule */
             $schedule
-                ->setScheduledReason($reason ? $reason : Aoe_Scheduler_Model_Schedule::REASON_ALWAYS)
+                ->setScheduledReason($reason ?: Aoe_Scheduler_Model_Schedule::REASON_ALWAYS)
                 ->setJobCode($jobCode)
                 ->setStatus(Aoe_Scheduler_Model_Schedule::STATUS_RUNNING)
                 ->setCreatedAt($ts)
@@ -198,7 +198,7 @@ class Aoe_Scheduler_Model_ScheduleManager
         /* @var $pendingSchedules Mage_Cron_Model_Resource_Schedule_Collection */
         $pendingSchedules = Mage::getModel('cron/schedule')->getCollection()
             ->addFieldToFilter('status', Aoe_Scheduler_Model_Schedule::STATUS_PENDING)
-            ->addFieldToFilter('scheduled_at', array('gt' => strftime('%Y-%m-%d %H:%M:%S', time())))
+            ->addFieldToFilter('scheduled_at', array('gt' => date(Varien_Db_Adapter_Pdo_Mysql::TIMESTAMP_FORMAT)))
             ->addOrder('scheduled_at', 'ASC');
         if (!empty($jobCode)) {
             $pendingSchedules->addFieldToFilter('job_code', $jobCode);
@@ -255,7 +255,7 @@ class Aoe_Scheduler_Model_ScheduleManager
         $schedule->setScheduledReason(Aoe_Scheduler_Model_Schedule::REASON_GENERATESCHEDULES);
 
         for ($time = $now + 60; $time < $timeAhead; $time += 60) {
-            $ts = strftime('%Y-%m-%d %H:%M:00', $time);
+            $ts = date('Y-m-d H:i:00', $time);
             if (!empty($exists[$job->getJobCode().'/'.$ts])) {
                 // already scheduled
                 continue;
@@ -381,7 +381,7 @@ class Aoe_Scheduler_Model_ScheduleManager
         $gaps = array();
         foreach ($lastRuns as $index => $run) {
             if ($index > 0) {
-                $gaps[$index] = intval($lastRuns[$index]) - intval($lastRuns[$index-1]);
+                $gaps[$index] = intval($run) - intval($lastRuns[$index-1]);
             }
         }
         return array(

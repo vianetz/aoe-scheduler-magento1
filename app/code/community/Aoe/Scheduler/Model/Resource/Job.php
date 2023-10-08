@@ -309,30 +309,28 @@ class Aoe_Scheduler_Model_Resource_Job extends Mage_Core_Model_Resource_Db_Abstr
         $pathPrefix = $this->getJobPathPrefix($jobCode) . '/';
         $values = array();
         foreach ($adapter->query($select)->fetchAll() as $row) {
-            if (strpos($row['path'], $pathPrefix) === 0) {
-                $values[substr($row['path'], strlen($pathPrefix))] = $row['value'];
+            if (str_starts_with($row['path'], $pathPrefix)) {
+                $values[substr($row['path'], strlen($pathPrefix))] = (string)$row['value'];
             }
         }
 
         // Clean up each entry to being a trimmed string
-        $values = array_map('trim', $values);
-
-        return $values;
+        return array_map('trim', $values);
     }
 
     public function getJobDataFromModel(Aoe_Scheduler_Model_Job $job)
     {
         $values = array(
-            'name'                 => $job->getName(),
-            'description'          => $job->getDescription(),
-            'short_description'    => $job->getShortDescription(),
-            'run/model'            => $job->getRunModel(),
-            'schedule/config_path' => $job->getScheduleConfigPath(),
-            'schedule/cron_expr'   => $job->getScheduleCronExpr(),
-            'parameters'           => $job->getParameters(),
-            'groups'               => $job->getGroups(),
+            'name'                 => (string)$job->getName(),
+            'description'          => (string)$job->getDescription(),
+            'short_description'    => (string)$job->getShortDescription(),
+            'run/model'            => (string)$job->getRunModel(),
+            'schedule/config_path' => (string)$job->getScheduleConfigPath(),
+            'schedule/cron_expr'   => (string)$job->getScheduleCronExpr(),
+            'parameters'           => (string)$job->getParameters(),
+            'groups'               => (string)$job->getGroups(),
             'is_active'            => ($job->getIsActive() ? '1' : '0'),
-            'on_success'           => $job->getOnSuccess()
+            'on_success'           => (string)$job->getOnSuccess()
         );
 
         // Strip out the auto-generated name
@@ -341,23 +339,22 @@ class Aoe_Scheduler_Model_Resource_Job extends Mage_Core_Model_Resource_Db_Abstr
         }
 
         // Clean up each entry to being a trimmed string
-        $values = array_map('trim', $values);
-
-        return $values;
+        return array_map('trim', $values);
     }
 
     public function setModelFromJobData(Aoe_Scheduler_Model_Job $job, array $data)
     {
-        $job->setName(isset($data['name']) ? $data['name'] : '');
-        $job->setDescription(isset($data['description']) ? $data['description'] : '');
-        $job->setShortDescription(isset($data['short_description']) ? $data['short_description'] : '');
-        $job->setRunModel(isset($data['run/model']) ? $data['run/model'] : '');
-        $job->setScheduleConfigPath(isset($data['schedule/config_path']) ? $data['schedule/config_path'] : '');
-        $job->setScheduleCronExpr(isset($data['schedule/cron_expr']) ? $data['schedule/cron_expr'] : '');
-        $job->setParameters(isset($data['parameters']) ? $data['parameters'] : '');
-        $job->setGroups(isset($data['groups']) ? $data['groups'] : '');
-        $job->setIsActive(isset($data['is_active']) ? $data['is_active'] : '');
-        $job->setOnSuccess(isset($data['on_success']) ? $data['on_success'] : '');
+        $job->setName($data['name'] ?? '');
+        $job->setDescription($data['description'] ?? '');
+        $job->setShortDescription($data['short_description'] ?? '');
+        $job->setRunModel($data['run/model'] ?? '');
+        $job->setScheduleConfigPath($data['schedule/config_path'] ?? '');
+        $job->setScheduleCronExpr($data['schedule/cron_expr'] ?? '');
+        $job->setParameters($data['parameters'] ?? '');
+        $job->setGroups($data['groups'] ?? '');
+        $job->setIsActive($data['is_active'] ?? '');
+        $job->setOnSuccess($data['on_success'] ?? '');
+
         return $job;
     }
 }

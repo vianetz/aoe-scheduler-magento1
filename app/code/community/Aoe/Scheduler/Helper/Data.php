@@ -58,33 +58,14 @@ class Aoe_Scheduler_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function decorateStatus($status)
     {
-        switch ($status) {
-            case Aoe_Scheduler_Model_Schedule::STATUS_SUCCESS:
-            case Aoe_Scheduler_Model_Schedule::STATUS_REPEAT:
-            case Aoe_Scheduler_Model_Schedule::STATUS_DIDNTDOANYTHING:
-                $result = '<span class="bar-green"><span>' . $status . '</span></span>';
-                break;
-            case Aoe_Scheduler_Model_Schedule::STATUS_PENDING:
-                $result = '<span class="bar-lightgray"><span>' . $status . '</span></span>';
-                break;
-            case Aoe_Scheduler_Model_Schedule::STATUS_RUNNING:
-                $result = '<span class="bar-yellow"><span>' . $status . '</span></span>';
-                break;
-            case Aoe_Scheduler_Model_Schedule::STATUS_SKIP_OTHERJOBRUNNING:
-            case Aoe_Scheduler_Model_Schedule::STATUS_MISSED:
-            case Aoe_Scheduler_Model_Schedule::STATUS_SKIP_PILINGUP:
-                $result = '<span class="bar-orange"><span>' . $status . '</span></span>';
-                break;
-            case Aoe_Scheduler_Model_Schedule::STATUS_ERROR:
-            case Aoe_Scheduler_Model_Schedule::STATUS_DISAPPEARED:
-            case Aoe_Scheduler_Model_Schedule::STATUS_KILLED:
-                $result = '<span class="bar-red"><span>' . $status . '</span></span>';
-                break;
-            default:
-                $result = $status;
-                break;
-        }
-        return $result;
+        return match ($status) {
+            Aoe_Scheduler_Model_Schedule::STATUS_SUCCESS, Aoe_Scheduler_Model_Schedule::STATUS_REPEAT, Aoe_Scheduler_Model_Schedule::STATUS_DIDNTDOANYTHING => '<span class="bar-green"><span>' . $status . '</span></span>',
+            Aoe_Scheduler_Model_Schedule::STATUS_PENDING => '<span class="bar-lightgray"><span>' . $status . '</span></span>',
+            Aoe_Scheduler_Model_Schedule::STATUS_RUNNING => '<span class="bar-yellow"><span>' . $status . '</span></span>',
+            Aoe_Scheduler_Model_Schedule::STATUS_SKIP_OTHERJOBRUNNING, Aoe_Scheduler_Model_Schedule::STATUS_MISSED, Aoe_Scheduler_Model_Schedule::STATUS_SKIP_PILINGUP => '<span class="bar-orange"><span>' . $status . '</span></span>',
+            Aoe_Scheduler_Model_Schedule::STATUS_ERROR, Aoe_Scheduler_Model_Schedule::STATUS_DISAPPEARED, Aoe_Scheduler_Model_Schedule::STATUS_KILLED => '<span class="bar-red"><span>' . $status . '</span></span>',
+            default => $status,
+        };
     }
 
     /**

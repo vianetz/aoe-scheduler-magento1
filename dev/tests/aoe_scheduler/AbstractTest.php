@@ -1,12 +1,11 @@
 <?php
 
-abstract class AbstractTest extends PHPUnit_Framework_TestCase
+abstract class AbstractTest extends \PHPUnit\Framework\TestCase
 {
+    protected array $jobs = array();
+    protected array $schedules = array();
 
-    protected $jobs = array();
-    protected $schedules = array();
-
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         require_once(MAGENTO_ROOT . '/app/Mage.php' );
@@ -17,7 +16,7 @@ abstract class AbstractTest extends PHPUnit_Framework_TestCase
         $scheduleManager->deleteAll();
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         foreach ($this->jobs as $job) { /* @var $job Aoe_Scheduler_Model_Job */
             $job->delete();

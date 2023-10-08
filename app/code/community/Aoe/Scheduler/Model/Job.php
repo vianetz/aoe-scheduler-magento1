@@ -122,10 +122,8 @@ class Aoe_Scheduler_Model_Job extends Mage_Core_Model_Abstract
 
     /**
      * Returns cron expression (and fetches it from configuration if required)
-     *
-     * @return string
      */
-    public function getCronExpression()
+    public function getCronExpression(): string
     {
         $cronExpr = null;
         if ($this->getScheduleConfigPath()) {
@@ -134,7 +132,8 @@ class Aoe_Scheduler_Model_Job extends Mage_Core_Model_Abstract
         if (empty($cronExpr) && $this->getScheduleCronExpr()) {
             $cronExpr = $this->getScheduleCronExpr();
         }
-        return trim($cronExpr);
+
+        return trim((string)$cronExpr);
     }
 
     /**

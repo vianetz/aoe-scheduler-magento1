@@ -267,7 +267,6 @@ class Aoe_Scheduler_Adminhtml_JobController extends Aoe_Scheduler_Controller_Abs
             $this->_getSession()->addError($e->getMessage());
         }
         $this->_redirect('*/*/');
-        return;
     }
 
     /**

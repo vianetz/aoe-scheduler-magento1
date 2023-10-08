@@ -60,7 +60,7 @@ $_helper = $this->helper('aoe_scheduler/data'); /* @var $_helper Aoe_Scheduler_H
             <?php endif; ?>
             <tr>
                 <td class="label"><?php echo $this->__('Memory Usage') ?>:</td>
-                <td><?php echo number_format($_schedule->getMemoryUsage(), 2) . ' MB'; ?></td>
+                <td><?php echo number_format((float)$_schedule->getMemoryUsage(), 2) . ' MB'; ?></td>
             </tr>
         </table>
     </div>

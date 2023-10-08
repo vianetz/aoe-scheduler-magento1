@@ -59,13 +59,13 @@ class Aoe_Scheduler_Model_Task_Test
 //        // $endtime = $starttime + rand(180, 360);
 //        $endtime = $starttime + $duration;
 //        $schedule
-//            ->setEta(strftime('%Y-%m-%d %H:%M:%S', $endtime))
+//            ->setEta(date(Varien_Db_Adapter_Pdo_Mysql::TIMESTAMP_FORMAT, $endtime))
 //            ->save();
 //        while ($endtime > time()) {
 //            sleep(5);
 //            $schedule
 //                ->setProgressMessage('Work in progress. Time spent: ' . (time() - $starttime))
-//                ->setEta(strftime('%Y-%m-%d %H:%M:%S', $endtime))
+//                ->setEta(date(Varien_Db_Adapter_Pdo_Mysql::TIMESTAMP_FORMAT, $endtime))
 //                ->save();
 //        }
 //

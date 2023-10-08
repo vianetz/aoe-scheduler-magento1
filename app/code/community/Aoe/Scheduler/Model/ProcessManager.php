@@ -37,7 +37,7 @@ class Aoe_Scheduler_Model_ProcessManager
     public function getAllKillRequests($host = null)
     {
         $collection = $this->getAllRunningSchedules($host);
-        $collection->addFieldToFilter('kill_request', array('lt' => strftime('%Y-%m-%d %H:%M:00', time()+60)));
+        $collection->addFieldToFilter('kill_request', array('lt' => date('Y-m-d H:i:00', time()+60)));
         return $collection;
     }
 
@@ -94,7 +94,7 @@ class Aoe_Scheduler_Model_ProcessManager
         if ($markAsErrorAfter) {
             $schedules = Mage::getModel('cron/schedule')->getCollection()/* @var $schedules Mage_Cron_Model_Resource_Schedule_Collection */
             ->addFieldToFilter('status', Aoe_Scheduler_Model_Schedule::STATUS_RUNNING)
-                ->addFieldToFilter('last_seen', array('lt' => strftime('%Y-%m-%d %H:%M:00', $maxAge)))
+                ->addFieldToFilter('last_seen', array('lt' => date('Y-m-d H:i:00', $maxAge)))
                 ->load();
 
             foreach ($schedules as $schedule) { /* @var $schedule Aoe_Scheduler_Model_Schedule */
@@ -113,11 +113,11 @@ class Aoe_Scheduler_Model_ProcessManager
             ->addFieldToFilter('last_seen', array('null' => true))
             ->addFieldToFilter('host', array('null' => true))
             ->addFieldToFilter('pid', array('null' => true))
-            ->addFieldToFilter('scheduled_at', array('lt' => strftime('%Y-%m-%d %H:%M:00', $maxAge)))
+            ->addFieldToFilter('scheduled_at', array('lt' => date('Y-m-d H:i:00', $maxAge)))
             ->load();
 
         foreach ($schedules->getIterator() as $schedule) { /* @var $schedule Aoe_Scheduler_Model_Schedule */
-            $schedule->setLastSeen(strftime('%Y-%m-%d %H:%M:%S', time()));
+            $schedule->setLastSeen(date(Varien_Db_Adapter_Pdo_Mysql::TIMESTAMP_FORMAT));
             $schedule->markAsDisappeared(sprintf('Process "%s" (id: %s) cannot be found anymore', $schedule->getJobCode(), $schedule->getId()));
         }
 
@@ -133,11 +133,11 @@ class Aoe_Scheduler_Model_ProcessManager
             ->addFieldToFilter('host', array('null' => true))
             ->addFieldToFilter('pid', array('null' => true))
             ->addFieldToFilter('scheduled_at', array('null' => true))
-            ->addFieldToFilter('created_at', array('lt' => strftime('%Y-%m-%d %H:%M:00', $maxAge)))
+            ->addFieldToFilter('created_at', array('lt' => date('Y-m-d H:i:00', $maxAge)))
             ->load();
 
         foreach ($schedules->getIterator() as $schedule) { /* @var $schedule Aoe_Scheduler_Model_Schedule */
-            $schedule->setLastSeen(strftime('%Y-%m-%d %H:%M:%S', time()));
+            $schedule->setLastSeen(date(Varien_Db_Adapter_Pdo_Mysql::TIMESTAMP_FORMAT));
             $schedule->markAsDisappeared(sprintf('Process "%s" (id: %s) cannot be found anymore', $schedule->getJobCode(), $schedule->getId()));
         }
 

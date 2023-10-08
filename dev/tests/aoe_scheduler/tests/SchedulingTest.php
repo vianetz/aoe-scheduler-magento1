@@ -2,7 +2,6 @@
 
 class SchedulingTest extends AbstractTest
 {
-
     /**
      * @test
      */

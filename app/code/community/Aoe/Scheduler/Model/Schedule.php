@@ -188,8 +188,8 @@ class Aoe_Scheduler_Model_Schedule extends Mage_Cron_Model_Schedule
 
             $startTime = time();
             $this
-                ->setExecutedAt(strftime('%Y-%m-%d %H:%M:%S', $startTime))
-                ->setLastSeen(strftime('%Y-%m-%d %H:%M:%S', $startTime))
+                ->setExecutedAt(date(Varien_Db_Adapter_Pdo_Mysql::TIMESTAMP_FORMAT, $startTime))
+                ->setLastSeen(date(Varien_Db_Adapter_Pdo_Mysql::TIMESTAMP_FORMAT, $startTime))
                 ->setStatus(Aoe_Scheduler_Model_Schedule::STATUS_RUNNING)
                 ->setHost(gethostname())
                 ->setPid(getmypid())
@@ -266,7 +266,7 @@ class Aoe_Scheduler_Model_Schedule extends Mage_Cron_Model_Schedule
             Mage::helper('aoe_scheduler')->sendErrorMail($this, $e->__toString());
         }
 
-        $this->setFinishedAt(strftime('%Y-%m-%d %H:%M:%S', time()));
+        $this->setFinishedAt(date(Varien_Db_Adapter_Pdo_Mysql::TIMESTAMP_FORMAT));
         $this->setMemoryUsage(memory_get_peak_usage(true) / pow(1024, 2));  // convert bytes to megabytes
         Mage::dispatchEvent('cron_' . $this->getJobCode() . '_after', array('schedule' => $this));
         Mage::dispatchEvent('cron_after', array('schedule' => $this));
@@ -325,8 +325,8 @@ class Aoe_Scheduler_Model_Schedule extends Mage_Cron_Model_Schedule
             $time = time();
         }
         $this->setStatus(Aoe_Scheduler_Model_Schedule::STATUS_PENDING)
-            ->setCreatedAt(strftime('%Y-%m-%d %H:%M:%S', time()))
-            ->setScheduledAt(strftime('%Y-%m-%d %H:%M:00', $time))
+            ->setCreatedAt(date(Varien_Db_Adapter_Pdo_Mysql::TIMESTAMP_FORMAT))
+            ->setScheduledAt(date('Y-m-d H:i:00', $time))
             ->save();
         return $this;
     }
@@ -401,7 +401,7 @@ class Aoe_Scheduler_Model_Schedule extends Mage_Cron_Model_Schedule
             } elseif ($this->getHost() == gethostname()) {
                 if ($this->checkPid()) {
                     $this
-                        ->setLastSeen(strftime('%Y-%m-%d %H:%M:%S', time()))
+                        ->setLastSeen(date(Varien_Db_Adapter_Pdo_Mysql::TIMESTAMP_FORMAT))
                         ->save();
                     return true;
                 } else {
@@ -461,7 +461,7 @@ class Aoe_Scheduler_Model_Schedule extends Mage_Cron_Model_Schedule
         if (!is_null($message)) {
             $this->addMessages($message);
         }
-        $this->setKillRequest(strftime('%Y-%m-%d %H:%M:%S', $time))
+        $this->setKillRequest(date(Varien_Db_Adapter_Pdo_Mysql::TIMESTAMP_FORMAT, $time))
            ->save();
         return $this;
     }
@@ -473,7 +473,6 @@ class Aoe_Scheduler_Model_Schedule extends Mage_Cron_Model_Schedule
      */
     public function kill()
     {
-
         if (!$this->checkPid()) {
             // already dead
             $this->markAsDisappeared(sprintf('Did not kill job "%s" (id: %s), because it was already dead.', $this->getJobCode(), $this->getId()));
@@ -514,7 +513,7 @@ class Aoe_Scheduler_Model_Schedule extends Mage_Cron_Model_Schedule
 
         $this
             ->setStatus(self::STATUS_KILLED)
-            ->setFinishedAt(strftime('%Y-%m-%d %H:%M:%S', time()))
+            ->setFinishedAt(date(Varien_Db_Adapter_Pdo_Mysql::TIMESTAMP_FORMAT))
             ->save();
     }
 
@@ -898,7 +897,7 @@ class Aoe_Scheduler_Model_Schedule extends Mage_Cron_Model_Schedule
         $constants = $reflect->getConstants();
         $statuses = array();
         foreach ($constants as $key => $value) {
-            if (strpos($key, 'STATUS_') === 0) {
+            if (str_starts_with($key, 'STATUS_')) {
                 $statuses[$value] = $value;
             }
         }
