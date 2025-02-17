@@ -8,15 +8,15 @@
  * @method $this setMessages($messages)
  * @method string getMessages()
  * @method $this setExecutedAt($executedAt)
- * @method string getExecutedAt()
+ * @method string|null getExecutedAt()
  * @method $this setCreatedAt($createdAt)
  * @method string getCreatedAt()
  * @method $this setScheduledAt($scheduledAt)
- * @method string getScheduledAt()
+ * @method string|null getScheduledAt()
  * @method $this setStatus($status)
  * @method string getStatus()
  * @method $this setFinishedAt($finishedAt)
- * @method string getFinishedAt()
+ * @method string|null getFinishedAt()
  * @method $this setParameters($parameters)
  * @method $this setEta($eta)
  * @method string getEta()
@@ -27,7 +27,7 @@
  * @method $this setProgressMessage($progressMessage)
  * @method string getProgressMessage()
  * @method $this setLastSeen($lastSeen)
- * @method string getLastSeen()
+ * @method string|null getLastSeen()
  * @method $this setScheduledBy($scheduledBy)
  * @method string getScheduledBy()
  * @method $this setScheduledReason($scheduledReason)
@@ -372,14 +372,14 @@ class Aoe_Scheduler_Model_Schedule extends Mage_Cron_Model_Schedule
         $duration = false;
         if ($this->getExecutedAt() && ($this->getExecutedAt() != '0000-00-00 00:00:00')) {
             if ($this->getFinishedAt() && ($this->getFinishedAt() != '0000-00-00 00:00:00')) {
-                $time = strtotime($this->getFinishedAt());
+                $time = strtotime((string)$this->getFinishedAt());
             } elseif ($this->getStatus() == Aoe_Scheduler_Model_Schedule::STATUS_RUNNING) {
                 $time = time();
             } else {
                 // Mage::throwException('No finish time found, but the job is not running');
                 return false;
             }
-            $duration = $time - strtotime($this->getExecutedAt());
+            $duration = $time - strtotime((string)$this->getExecutedAt());
         }
         return $duration;
     }
@@ -396,7 +396,7 @@ class Aoe_Scheduler_Model_Schedule extends Mage_Cron_Model_Schedule
     public function isAlive()
     {
         if ($this->getStatus() == Aoe_Scheduler_Model_Schedule::STATUS_RUNNING) {
-            if (time() - strtotime($this->getLastSeen()) < 2 * 60) { // TODO: make this configurable
+            if (time() - strtotime((string)$this->getLastSeen()) < 2 * 60) { // TODO: make this configurable
                 return true;
             } elseif ($this->getHost() == gethostname()) {
                 if ($this->checkPid()) {
@@ -592,7 +592,7 @@ class Aoe_Scheduler_Model_Schedule extends Mage_Cron_Model_Schedule
             return true;
         }
         $now = time();
-        $time = strtotime($this->getScheduledAt());
+        $time = strtotime((string)$this->getScheduledAt());
         if ($time > $now) {
             // not scheduled yet
             return false;
